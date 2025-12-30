@@ -1,11 +1,10 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { Expense, HealthLog, PetProfile } from "../types";
 
 // 宣告 process 變數以符合 TypeScript 編譯檢查
 declare var process: { env: { [key: string]: string | undefined } };
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const getApiKey = () => process.env.API_KEY || "";
 
 const getAgeString = (birthday: string) => {
     if (!birthday) return "年齡未知";
@@ -26,7 +25,10 @@ export const GeminiService = {
    */
   analyzeSpending: async (expenses: Expense[], profile: PetProfile) => {
     if (expenses.length === 0) return "目前沒有足夠的花費資料進行分析。";
+    const apiKey = getApiKey();
+    if (!apiKey) return "請設定 API Key 以啟用 AI 分析功能。";
 
+    const ai = new GoogleGenAI({ apiKey });
     const expenseSummary = expenses.map(e => `${e.date}: ${e.category} - $${e.amount} (${e.description})`).join('\n');
 
     try {
@@ -51,6 +53,10 @@ export const GeminiService = {
    * Provides health advice based on recent logs
    */
   analyzeHealth: async (logs: HealthLog[], profile: PetProfile) => {
+    const apiKey = getApiKey();
+    if (!apiKey) return "請設定 API Key 以啟用 AI 健康助理功能。";
+    
+    const ai = new GoogleGenAI({ apiKey });
     const relevantLogs = logs.slice(0, 10); // Analyze last 10 logs
     const logSummary = relevantLogs.map(l => `${l.date} [${l.type}]: ${l.title} - ${l.description}`).join('\n');
 
@@ -79,7 +85,11 @@ export const GeminiService = {
    * General Q&A
    */
   askPetQuestion: async (question: string, profile: PetProfile) => {
-     try {
+    const apiKey = getApiKey();
+    if (!apiKey) return "API Key 尚未設定。";
+    
+    const ai = new GoogleGenAI({ apiKey });
+    try {
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: `你是一個寵物專家。使用者問了一個關於他們寵物 (${profile.type}, ${profile.name}, ${getAgeString(profile.birthday)}) 的問題。
@@ -101,6 +111,10 @@ export const GeminiService = {
    * Nutritional Advice
    */
   analyzeNutrition: async (profile: PetProfile) => {
+    const apiKey = getApiKey();
+    if (!apiKey) return "API Key 尚未設定，無法進行營養分析。";
+    
+    const ai = new GoogleGenAI({ apiKey });
     try {
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',

@@ -1,4 +1,3 @@
-
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -7,7 +6,7 @@ declare var process: { env: { [key: string]: string | undefined } };
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // 關鍵：確保在 GitHub Pages 的子目錄下能正確運作
+  base: './', // 確保部署到 GitHub Pages 子路徑時資源路徑正確
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },
