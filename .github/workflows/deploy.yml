@@ -1,0 +1,36 @@
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 檢出代碼
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 設定 Node 環境
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # 移除 cache: 'npm'，因為專案目前沒有 package-lock.json
+
+      - name: Install dependencies 安裝套件
+        run: npm install
+
+      - name: Build 專案打包
+        run: npm run build
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+
+      - name: Deploy 部署到 GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages
