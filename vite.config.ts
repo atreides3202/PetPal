@@ -1,3 +1,4 @@
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -6,13 +7,14 @@ declare var process: { env: { [key: string]: string | undefined } };
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // 確保部署到 GitHub Pages 子路徑時資源路徑正確
+  base: '/PetPal/', // 必須與 GitHub 儲存庫名稱一致
   define: {
     'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
   },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
+    emptyOutDir: true,
     rollupOptions: {
       output: {
         manualChunks: {
