@@ -3,9 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: './', // Using './' instead of '/PetPal/' is a "magic" fix for many users
+  base: './', 
   build: {
     outDir: 'dist',
-    assetsDir: 'assets',
   }
 })
